@@ -4,6 +4,9 @@
     <ClCompile Include="C:\Users\Interfocus\coding\OpenGL_learning\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\Interfocus\coding\OpenGL_learning\src\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="C:\Users\Interfocus\coding\OpenGL_learning\CMakeLists.txt" />

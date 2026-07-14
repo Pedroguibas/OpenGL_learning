@@ -17,9 +17,20 @@ target_include_directories(glad PUBLIC
 
 add_executable(OpenGL_learning
 	src/main.cpp
+	src/Shader.cpp
+)
+
+target_include_directories(OpenGL_learning PRIVATE
+	include
 )
 
 target_link_libraries(OpenGL_learning PRIVATE
 	glfw
 	glad
+)
+
+add_custom_command(TARGET OpenGL_learning POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/shaders
+        $<TARGET_FILE_DIR:OpenGL_learning>/shaders
 )
