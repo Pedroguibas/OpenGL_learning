@@ -123,3 +123,52 @@ string Shader::readFile(const string &path) {
 
   return buffer.str();
 }
+
+GLint Shader::getUniformLocation(const string &name) {
+  auto it = m_uniformLocations.find(name);
+
+  if (it != m_uniformLocations.end()) {
+    return it->second;
+  } 
+
+  GLint location = glGetUniformLocation(
+    m_ID,
+    name.c_str()
+  );
+
+  m_uniformLocations[name] = location;
+
+  return location;
+}
+
+void Shader::setFloat(const string &name, const float val) {
+  GLint location = getUniformLocation(name);
+
+  glUniform1f(location, val);
+}
+
+void Shader::setVec2(const string &name, const float val1, const float val2) {
+  GLint location = getUniformLocation(name);
+
+  glUniform2f(location, val1, val2);
+}
+
+void Shader::setVec3(const string &name, const float val1, const float val2, const float val3) {
+  GLint location = getUniformLocation(name);
+
+  glUniform3f(location, val1, val2, val3);
+}
+
+void Shader::setVec4(const string &name, const float val1, const float val2, const float val3, const float val4) {
+  GLint location = getUniformLocation(name);
+
+  glUniform4f(location, val1, val2, val3, val4);
+}
+
+void Shader::setMat4(const string &name, const float *mat, const bool transpose) {
+  GLint location = getUniformLocation(name);
+
+  glUniformMatrix4fv(location, sizeof(mat), transpose, mat);
+}
+
+

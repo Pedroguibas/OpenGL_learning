@@ -98,10 +98,10 @@ int main() {
     return -1;
   }
 
-    
+  float position[2] = {0.0, 0.5};
   while (!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT);
-
+    
     shader->use();
 
     glBindVertexArray(VAO);
