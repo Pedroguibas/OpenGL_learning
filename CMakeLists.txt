@@ -18,6 +18,7 @@ target_include_directories(glad PUBLIC
 add_executable(OpenGL_learning
 	src/main.cpp
 	src/Shader.cpp
+	src/mat.cpp
 )
 
 target_include_directories(OpenGL_learning PRIVATE

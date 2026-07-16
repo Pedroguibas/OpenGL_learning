@@ -165,10 +165,15 @@ void Shader::setVec4(const string &name, const float val1, const float val2, con
   glUniform4f(location, val1, val2, val3, val4);
 }
 
-void Shader::setMat4(const string &name, const float *mat, const bool transpose) {
+void Shader::setMat4(const string &name, const float *mat) {
   GLint location = getUniformLocation(name);
 
-  glUniformMatrix4fv(location, sizeof(mat), transpose, mat);
+  glUniformMatrix4fv(location, 1, GL_TRUE, mat);
 }
 
+void Shader::setMat4(const string &name, const Mat4 &mat) {
+  GLint location = getUniformLocation(name);
+
+  glUniformMatrix4fv(location, 1, GL_TRUE, &mat.m[0][0]);
+}
 

@@ -4,6 +4,7 @@
 
 #include <string>
 #include <unordered_map>
+#include "mat.h"
 using std::string;
 using std::unordered_map;
 
@@ -30,7 +31,8 @@ public:
   void setVec2(const string &name, const float val1, const float val2);
   void setVec3(const string &name, const float val1, const float val2, const float val3);
   void setVec4(const string &name, const float val1, const float val2, const float val3, const float val4);
-  void setMat4(const string &name, const float *mat, const bool transpose);
+  void setMat4(const string &name, const float *mat);
+  void setMat4(const string &name, const Mat4 &mat);
 
   void use() const;
 };

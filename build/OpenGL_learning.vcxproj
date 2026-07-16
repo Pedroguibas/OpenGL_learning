@@ -414,6 +414,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   <ItemGroup>
     <ClCompile Include="C:\Users\Interfocus\coding\OpenGL_learning\src\main.cpp" />
     <ClCompile Include="C:\Users\Interfocus\coding\OpenGL_learning\src\Shader.cpp" />
+    <ClCompile Include="C:\Users\Interfocus\coding\OpenGL_learning\src\mat.cpp" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

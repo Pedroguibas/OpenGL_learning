@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "Shader.h"
+#include "mat.h"
 using std::cout;
 
 void framebuffer_size_callback(
@@ -103,6 +104,10 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT);
     
     shader->use();
+
+    Mat4 model = scale(1.5, 1.5, 1) * rotationZ(glfwGetTime() * 50);
+
+    shader->setMat4("model", model);
 
     glBindVertexArray(VAO);
 
