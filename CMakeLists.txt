@@ -19,6 +19,7 @@ add_executable(OpenGL_learning
 	src/main.cpp
 	src/Shader.cpp
 	src/mat.cpp
+	src/Camera.cpp
 )
 
 target_include_directories(OpenGL_learning PRIVATE

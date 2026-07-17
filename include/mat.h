@@ -8,6 +8,8 @@ class Vec3 {
     Vec3();
     Vec3(float x, float y, float z);
 
+    Vec3 operator-() const;
+    Vec3 operator-(const Vec3 &other) const;
 };
 
 class Vec4 {
@@ -45,6 +47,10 @@ Mat4 translate(Vec3 v);
 Mat4 scale(float x, float y, float z);
 Mat4 scale(Vec3 v);
 
+float degToRad(float deg);
+
 Vec3 cross(Vec3 a, Vec3 b);
 
 Vec3 normalize(Vec3 v);
+
+float dot(Vec3 a, Vec3 b);

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "Shader.h"
+#include "Camera.h"
 #include "mat.h"
 using std::cout;
 
@@ -44,6 +45,7 @@ int main() {
 
   glViewport(0, 0, 1280, 720);
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
   glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 
 
@@ -99,15 +101,25 @@ int main() {
     return -1;
   }
 
-  float position[2] = {0.0, 0.5};
+  Camera cam(Vec3(0,0,10));
+  cam.lookAt(Vec3(0,0,-0.1));
+
+  int window_w;
+  int window_h;
+
   while (!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT);
+    glfwGetFramebufferSize(window, &window_w, &window_h);
     
     shader->use();
 
-    Mat4 model = scale(1.5, 1.5, 1) * rotationZ(glfwGetTime() * 50);
+    Mat4 model = scale(1.5, 1.5, 1);
+    Mat4 view = cam.getViewMatrix();
+    Mat4 projection = cam.getProjectionMatrix(window_w, window_h);
 
     shader->setMat4("model", model);
+    shader->setMat4("view", view);
+    shader->setMat4("projection", projection);
 
     glBindVertexArray(VAO);
 
