@@ -8,14 +8,17 @@
 
 
 Shader::Shader(const string& vertexPath, const string&fragmentPath) {
+  // Gets files as strings
   string vertexSrc = Shader::readFile(vertexPath);
   string fragmentSrc = Shader::readFile(fragmentPath);
 
+  // Compile both shaders
   GLuint vertexShader = Shader::compileShader(GL_VERTEX_SHADER, vertexSrc.c_str());
   GLuint fragmentShader = Shader::compileShader(GL_FRAGMENT_SHADER, fragmentSrc.c_str());
 
   m_ID = linkProgram(vertexShader, fragmentShader);
 
+  // Deletes shaders in CPU after sending them to GPU
   glDeleteShader(vertexShader);
   glDeleteShader(fragmentShader);
 }
@@ -28,7 +31,8 @@ void Shader::use() const {
 }
 
 GLuint Shader::compileShader(const GLenum type, const char* src) {
-GLuint shader = glCreateShader(type);
+  // Creates shader
+  GLuint shader = glCreateShader(type);
 
   glShaderSource(
     shader,
@@ -36,9 +40,10 @@ GLuint shader = glCreateShader(type);
     &src,
     nullptr
   );
-
+  // compiles the shader
   glCompileShader(shader);
 
+  // checks for success
   GLint success;
   glGetShaderiv(
     shader,
@@ -69,17 +74,22 @@ GLuint shader = glCreateShader(type);
     }
   }
 
+  // returns shader id
   return shader;
 }
 
 GLuint Shader::linkProgram(GLuint vertexShader, GLuint fragmentShader) {
+  // creates program
   GLuint program = glCreateProgram();
 
+  // attaches shaders to program
   glAttachShader(program, vertexShader);
   glAttachShader(program, fragmentShader);
 
+  // links program to context
   glLinkProgram(program);
 
+  // checks for success;
   GLint success;
   glGetProgramiv(program, GL_LINK_STATUS, &success);
 
@@ -104,12 +114,11 @@ GLuint Shader::linkProgram(GLuint vertexShader, GLuint fragmentShader) {
   return program;
 }
 
+
+// returns file as string
 string Shader::readFile(const string &path) {
   std::cout << "Opening shader: " << path << '\n';
   std::ifstream file(path);
-
-  
-  std::cout << std::filesystem::current_path() << '\n';
 
   if (!file.is_open()) {
     throw std::runtime_error(
@@ -117,6 +126,7 @@ string Shader::readFile(const string &path) {
     );
   }
 
+  
   std::stringstream buffer;
 
   buffer << file.rdbuf();
@@ -140,6 +150,9 @@ GLint Shader::getUniformLocation(const string &name) {
 
   return location;
 }
+
+
+
 
 void Shader::setFloat(const string &name, const float val) {
   GLint location = getUniformLocation(name);

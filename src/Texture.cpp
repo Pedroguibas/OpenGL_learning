@@ -4,7 +4,8 @@
 #include <iostream>
 
 Texture::Texture(string file) {
-    unsigned char* data = stbi_load(
+  // reads texture file and gets metadata
+  unsigned char* data = stbi_load(
     file.c_str(),
     &width,
     &height,
@@ -12,6 +13,7 @@ Texture::Texture(string file) {
     0
   );
 
+  // throws error if file could not be read
   if (!data) {
     throw std::runtime_error(
       string("Not able to locate texture: ") +
@@ -19,6 +21,7 @@ Texture::Texture(string file) {
     );
   }
 
+  // converts int to gl constants
   GLenum format;
   switch (channels) {
     case 1:
@@ -37,47 +40,49 @@ Texture::Texture(string file) {
     throw std::runtime_error("Unsupported texture format.");
   }
 
+  // generates and binds texture
   glGenTextures(1, &id);
   glBindTexture(GL_TEXTURE_2D, id);
 
+  // set up texture params
   glTexParameteri(
     GL_TEXTURE_2D,
     GL_TEXTURE_WRAP_S,
     GL_REPEAT
-);
-
-glTexParameteri(
+  );
+  glTexParameteri(
     GL_TEXTURE_2D,
     GL_TEXTURE_WRAP_T,
     GL_REPEAT
-);
-
-glTexParameteri(
+  );
+  glTexParameteri(
     GL_TEXTURE_2D,
     GL_TEXTURE_MIN_FILTER,
     GL_LINEAR_MIPMAP_LINEAR
-);
-
-glTexParameteri(
+  );
+  glTexParameteri(
     GL_TEXTURE_2D,
     GL_TEXTURE_MAG_FILTER,
     GL_LINEAR
-);
-
-  glTexImage2D(
-    GL_TEXTURE_2D,
-    0,
-    format,
-    width,
-    height,
-    0,
-    format,
-    GL_UNSIGNED_BYTE,
-    data
   );
 
+  // sends texture to GPU
+  glTexImage2D(
+    GL_TEXTURE_2D, // texture type
+    0, // level
+    format, // format in cpu
+    width,
+    height,
+    0, //border size
+    format, //format in gpu
+    GL_UNSIGNED_BYTE, // type
+    data // pixels
+  );
+
+  // generate texture map
   glGenerateMipmap(GL_TEXTURE_2D);
 
+  // deletes texture data in CPU after sending it to GPU
   stbi_image_free(data);
 }
 
