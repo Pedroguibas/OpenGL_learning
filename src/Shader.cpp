@@ -177,3 +177,8 @@ void Shader::setMat4(const string &name, const Mat4 &mat) {
   glUniformMatrix4fv(location, 1, GL_TRUE, &mat.m[0][0]);
 }
 
+void Shader::setInt(const string &name, const int val) {
+  GLint location = getUniformLocation(name);
+
+  glUniform1i(location, val);
+}

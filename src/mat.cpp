@@ -1,5 +1,5 @@
 #include "mat.h"
-#include <corecrt_math_defines.h>
+#include <numbers>
 #include <cmath>
 using std::cos;
 using std::sin;
@@ -77,7 +77,7 @@ Mat4::Mat4() {
 }
 
 float degToRad(float deg) {
-  return deg * M_PI / 180;
+  return deg * std::numbers::pi_v<float> / 180;
 }
 
 Mat4 rotationX(float deg) {

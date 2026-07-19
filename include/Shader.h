@@ -33,6 +33,7 @@ public:
   void setVec4(const string &name, const float val1, const float val2, const float val3, const float val4);
   void setMat4(const string &name, const float *mat);
   void setMat4(const string &name, const Mat4 &mat);
+  void setInt(const string &name, const int val);
 
   void use() const;
 };
