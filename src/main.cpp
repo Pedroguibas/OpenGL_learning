@@ -6,6 +6,7 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "mat.h"
+#include "Mesh.h"
 #include <Texture.h>
 using std::cout;
 
@@ -63,23 +64,6 @@ int main() {
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
   glCullFace(GL_FRONT);
-  
-  
-  // Creates and bind Vertex Array Object
-  GLuint VAO;
-  glGenVertexArrays(1, &VAO);
-  glBindVertexArray(VAO);
-
-
-  // Creates and binds Element Buffer Object
-  GLuint EBO;
-  glGenBuffers(1, &EBO);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-
-  // Creates and binds Vertex Buffer Object
-  GLuint VBO;
-  glGenBuffers(1, &VBO);
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
 
   // Defines cube vertices
@@ -142,46 +126,8 @@ int main() {
     21, 23, 22
   };
 
-  // Sends vertices to VBO
-  glBufferData(
-    GL_ARRAY_BUFFER,
-    sizeof(vertices),
-    vertices,
-    GL_STATIC_DRAW
-  );
-
-  // Sends indices to EBO
-  glBufferData(
-    GL_ELEMENT_ARRAY_BUFFER,
-    sizeof(indices),
-    indices,
-    GL_STATIC_DRAW
-  );
-
-  
-  // Defines how to assemble first 3 floats of vertex
-  glVertexAttribPointer(
-    0,
-    3,
-    GL_FLOAT,
-    GL_FALSE,
-    5 * sizeof(float),
-    (void*)0
-  );
-
-  glEnableVertexAttribArray(0);
-
-  // Defines how to assemble last 2 floats of vertex
-  glVertexAttribPointer(
-    1,
-    2,
-    GL_FLOAT,
-    GL_FALSE,
-    5 * sizeof(float),
-    (void*)(3 * sizeof(float))
-  );
-
-  glEnableVertexAttribArray(1);
+  // Mesh cube = Mesh::createTextured(vertices, indices, 36, sizeof(vertices));
+  Mesh cube = Mesh::box(1.0f, 1.0f, 1.0f);
 
   // Initializes Texture
   Texture *tex;
@@ -243,17 +189,7 @@ int main() {
     shader->setMat4("projection", projection);
     shader->setMat4("mvp", mvp);
 
-    // Binds VAO
-    glBindVertexArray(VAO);
-
-    // Draws every element
-    glDrawElements(
-      GL_TRIANGLES,
-      sizeof(indices) / sizeof(indices[0]),
-      GL_UNSIGNED_INT,
-      nullptr
-    );  
-
+    cube.draw();
     
     glfwSwapBuffers(window);
 
