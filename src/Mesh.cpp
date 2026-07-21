@@ -146,7 +146,7 @@ Mesh Mesh::box(float width, float height, float depth) {
     21, 23, 22
   };
 
-  return Mesh::createTextured(vertices, indices, 36, sizeof(vertices));
+  return Mesh::createTextured(vertices, indices, sizeof(indices) / sizeof(indices[0]), sizeof(vertices));
 }
 
 Mesh::~Mesh()
