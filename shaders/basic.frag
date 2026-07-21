@@ -2,12 +2,13 @@
 
 in vec2 texCoord;
 in vec3 normal;
+in vec3 fragmentPosition;
 
 uniform sampler2D texture1;
 
 uniform vec3 lightDirection;
 uniform vec3 lightColor;
-uniform vec3 cmaeraPosition;
+uniform vec3 cameraPosition;
 
 uniform float ambientStrength;
 uniform float specularIntensity;
@@ -17,7 +18,6 @@ out vec4 FragColor;
 
 void main() {
   vec4 textureColor = texture(texture1, texCoord);
-  vec3 viewDirection = normalize(cameraPosition - fragmentPosition);
 
   vec3 normalizedNormal = normalize(normal);
   vec3 directionToLight = normalize(-lightDirection);
@@ -27,8 +27,25 @@ void main() {
   vec3 ambient = ambientStrength * lightColor;
 
   vec3 diffuse = diffuseStrength * lightColor;
+  
+  vec3 viewDirection = normalize(cameraPosition - fragmentPosition);
 
-  vec3 finalLighting = ambient + diffuse;
+  vec3 reflectedDirection = reflect(
+    -directionToLight,
+    normalizedNormal
+  );
+
+  float specularStrength = pow(
+    max(
+      dot(viewDirection, reflectedDirection),
+      0.0
+    ),
+    shininess
+  );
+
+  vec3 specular = specularIntensity * specularStrength * lightColor;
+
+  vec3 finalLighting = ambient + diffuse + specular;
 
   FragColor = vec4(textureColor.rgb * finalLighting, textureColor.a);
 }

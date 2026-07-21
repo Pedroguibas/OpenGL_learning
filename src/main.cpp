@@ -131,12 +131,29 @@ int main() {
 
     shader->setFloat("ambientStrength", 0.25f);
 
-shader->setVec3(
-    "lightColor",
-    1.2f,
-    1.2f,
-    1.2f
-);
+    shader->setVec3(
+        "lightColor",
+        1.2f,
+        1.2f,
+        1.2f
+    );
+
+    shader->setVec3(
+        "cameraPosition",
+        cam.position.x,
+        cam.position.y,
+        cam.position.z
+    );
+
+    shader->setFloat(
+        "specularIntensity",
+        0.5f
+    );
+
+    shader->setFloat(
+        "shininess",
+        37.0f
+    );
 
     // sends matrices to GPU
     shader->setMat4("model", model);
