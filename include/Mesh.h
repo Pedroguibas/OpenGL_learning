@@ -15,6 +15,7 @@ class Mesh {
 
     Mesh static createColored(float *vertexes, unsigned int *indices, GLsizei indiceCount, GLsizeiptr vertexBufferSize);
     Mesh static createTextured(float *vertexes, unsigned int *indices, GLsizei indiceCount, GLsizeiptr vertexBufferSize);
+    Mesh static createLitTextured(float *vertexes, unsigned int *indices, GLsizei indiceCount, GLsizeiptr vertexBufferSize);
     Mesh static box(float width, float height, float depth);
 
     void addAttribute(GLuint index, GLuint size, GLenum type, GLboolean normalized, const void *pointer);

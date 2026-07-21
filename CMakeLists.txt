@@ -47,3 +47,9 @@ add_custom_command(TARGET OpenGL_learning POST_BUILD
         ${CMAKE_SOURCE_DIR}/textures
         $<TARGET_FILE_DIR:OpenGL_learning>/textures
 )
+
+target_link_options(OpenGL_learning PRIVATE
+	-static
+	-static-libgcc
+	-static-libstdc++
+)

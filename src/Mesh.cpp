@@ -81,6 +81,36 @@ Mesh Mesh::createTextured(float *vertexes, unsigned int *indices, GLsizei indice
   return mesh;
 }
 
+Mesh Mesh::createLitTextured(float *vertexes, unsigned int *indices, GLsizei indiceCount, GLsizeiptr vertexBufferSize) {
+  Mesh mesh(vertexes, indices, indiceCount, vertexBufferSize, 8 * sizeof(float));
+
+  mesh.addAttribute(
+    0,
+    3,
+    GL_FLOAT,
+    GL_FALSE,
+    (void*)0
+  );
+
+  mesh.addAttribute(
+    1,
+    2,
+    GL_FLOAT,
+    GL_FALSE,
+    (void*)(3 * sizeof(float))
+  );
+
+  mesh.addAttribute(
+    2,
+    3,
+    GL_FLOAT,
+    GL_FALSE,
+    (void*)(5 * sizeof(float))
+  );
+
+  return mesh;
+}
+
 Mesh Mesh::box(float width, float height, float depth) {
   GLfloat h_width = width/2,
           h_height = height/2,
@@ -89,40 +119,40 @@ Mesh Mesh::box(float width, float height, float depth) {
   // Defines cube vertices
   float vertices[] = {
     // Front
-    -h_width, h_height, h_depth, 0.0f, 0.0f, // 0
-    h_width, h_height, h_depth, 1.0f, 0.0f, // 1
-    -h_width, -h_height, h_depth, 0.0f, 1.0f, // 2
-    h_width, -h_height, h_depth, 1.0f, 1.0f, // 3
+    -h_width, h_height, h_depth, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, // 0
+    h_width, h_height, h_depth, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // 1
+    -h_width, -h_height, h_depth, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, // 2
+    h_width, -h_height, h_depth, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, // 3
 
     // Back
-    -h_width, -h_height, -h_depth, 0.0f, 0.0f, // 4
-    h_width, -h_height, -h_depth, 1.0f, 0.0f, // 5
-    -h_width, h_height, -h_depth, 0.0f, 1.0f, // 6
-    h_width, h_height, -h_depth, 1.0f, 1.0f, // 7
+    -h_width, -h_height, -h_depth, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, // 4
+    h_width, -h_height, -h_depth, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f, // 5
+    -h_width, h_height, -h_depth, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f, // 6
+    h_width, h_height, -h_depth, 1.0f, 1.0f, 0.0f, 0.0f, -1.0f, // 7
 
     // Top
-    -h_width, h_height, -h_depth, 0.0f, 0.0f, // 8
-    h_width, h_height, -h_depth, 1.0f, 0.0f, // 9
-    -h_width, h_height, h_depth, 0.0f, 1.0f, // 10
-    h_width, h_height, h_depth, 1.0f, 1.0f, // 11
+    -h_width, h_height, -h_depth, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, // 8
+    h_width, h_height, -h_depth, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // 9
+    -h_width, h_height, h_depth, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // 10
+    h_width, h_height, h_depth, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, // 11
 
     // Bottom
-    -h_width, -h_height, h_depth, 0.0f, 0.0f, // 12
-    h_width, -h_height, h_depth, 1.0f, 0.0f, // 13
-    -h_width, -h_height, -h_depth, 0.0f, 1.0f, // 14
-    h_width, -h_height, -h_depth, 1.0f, 1.0f, // 15
+    -h_width, -h_height, h_depth, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, // 12
+    h_width, -h_height, h_depth, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, // 13
+    -h_width, -h_height, -h_depth, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f, // 14
+    h_width, -h_height, -h_depth, 1.0f, 1.0f, 0.0f, -1.0f, 0.0f, // 15
 
     // Left
-    -h_width, h_height, -h_depth, 0.0f, 0.0f, // 16
-    -h_width, h_height, h_depth, 1.0f, 0.0f, // 17
-    -h_width, -h_height, -h_depth, 0.0f, 1.0f, // 18
-    -h_width, -h_height, h_depth, 1.0f, 1.0f, // 19
+    -h_width, h_height, -h_depth, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // 16
+    -h_width, h_height, h_depth, 1.0f, 0.0f, -1.0f, 0.0f, 0.0f, // 17
+    -h_width, -h_height, -h_depth, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, // 18
+    -h_width, -h_height, h_depth, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f, // 19
 
     // Right
-    h_width, h_height, h_depth, 0.0f, 0.0f, // 20
-    h_width, h_height, -h_depth, 1.0f, 0.0f, // 21
-    h_width, -h_height, h_depth, 0.0f, 1.0f, // 22
-    h_width, -h_height, -h_depth, 1.0f, 1.0f // 23
+    h_width, h_height, h_depth, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // 20
+    h_width, h_height, -h_depth, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, // 21
+    h_width, -h_height, h_depth, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, // 22
+    h_width, -h_height, -h_depth, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f // 23
   };
 
   // Defines cube face triangle
@@ -146,7 +176,7 @@ Mesh Mesh::box(float width, float height, float depth) {
     21, 23, 22
   };
 
-  return Mesh::createTextured(vertices, indices, sizeof(indices) / sizeof(indices[0]), sizeof(vertices));
+  return Mesh::createLitTextured(vertices, indices, sizeof(indices) / sizeof(indices[0]), sizeof(vertices));
 }
 
 Mesh::~Mesh()

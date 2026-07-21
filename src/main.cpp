@@ -65,69 +65,8 @@ int main() {
   glEnable(GL_CULL_FACE);
   glCullFace(GL_FRONT);
 
-
-  // Defines cube vertices
-  float vertices[] = {
-    // Front
-    -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, // 0
-    0.5f, 0.5f, 0.5f, 1.0f, 0.0f, // 1
-    -0.5f, -0.5f, 0.5f, 0.0f, 1.0f, // 2
-    0.5f, -0.5f, 0.5f, 1.0f, 1.0f, // 3
-
-    // Back
-    -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // 4
-    0.5f, -0.5f, -0.5f, 1.0f, 0.0f, // 5
-    -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, // 6
-    0.5f, 0.5f, -0.5f, 1.0f, 1.0f, // 7
-
-    // Top
-    -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, // 8
-    0.5f, 0.5f, -0.5f, 1.0f, 0.0f, // 9
-    -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, // 10
-    0.5f, 0.5f, 0.5f, 1.0f, 1.0f, // 11
-
-    // Bottom
-    -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, // 12
-    0.5f, -0.5f, 0.5f, 1.0f, 0.0f, // 13
-    -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // 14
-    0.5f, -0.5f, -0.5f, 1.0f, 1.0f, // 15
-
-    // Left
-    -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, // 16
-    -0.5f, 0.5f, 0.5f, 1.0f, 0.0f, // 17
-    -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // 18
-    -0.5f, -0.5f, 0.5f, 1.0f, 1.0f, // 19
-
-    // Right
-    0.5f, 0.5f, 0.5f, 0.0f, 0.0f, // 20
-    0.5f, 0.5f, -0.5f, 1.0f, 0.0f, // 21
-    0.5f, -0.5f, 0.5f, 0.0f, 1.0f, // 22
-    0.5f, -0.5f, -0.5f, 1.0f, 1.0f // 23
-  };
-
-  // Defines cube face triangle
-  unsigned int indices[] = {
-    0, 1, 2,
-    1, 3, 2,
-
-    4, 5, 6,
-    5, 7, 6,
-
-    8, 9, 10,
-    9, 11, 10,
-
-    12, 13, 14,
-    13, 15, 14,
-
-    16, 17, 18,
-    17, 19, 18,
-
-    20, 21, 22,
-    21, 23, 22
-  };
-
-  // Mesh cube = Mesh::createTextured(vertices, indices, 36, sizeof(vertices));
-  Mesh cube = Mesh::box(1.0f, 1.0f, 1.0f);
+  Mesh cube1 = Mesh::box(1.0f, 1.0f, 1.0f);
+  Mesh cube2 = Mesh::box(1.0f, 1.0f, 1.0f);
 
   // Initializes Texture
   Texture *tex;
@@ -148,7 +87,7 @@ int main() {
   }
 
   // Initializes camera
-  Camera cam(Vec3(0,3,3));
+  Camera cam(Vec3(0,2,2));
   
   int window_w;
   int window_h;
@@ -178,10 +117,26 @@ int main() {
     cam.lookAt(Vec3(0,0,-0.1));
 
     // sets up MVP matrix
-    Mat4 model = scale(2, 2, 2) * rotationX(time * 90);
+    Mat4 model = translate(Vec3(-0.5, 0.5, 0));
     Mat4 view = cam.getViewMatrix();
     Mat4 projection = cam.getProjectionMatrix(window_w, window_h);
     Mat4 mvp = projection * view * model;
+
+    shader->setVec3(
+        "lightDirection",
+        1.0f,
+        -1.0f,
+        1.0f
+    );
+
+    shader->setFloat("ambientStrength", 0.25f);
+
+shader->setVec3(
+    "lightColor",
+    1.2f,
+    1.2f,
+    1.2f
+);
 
     // sends matrices to GPU
     shader->setMat4("model", model);
@@ -189,8 +144,16 @@ int main() {
     shader->setMat4("projection", projection);
     shader->setMat4("mvp", mvp);
 
-    cube.draw();
+    cube1.draw();
     
+    model = translate(Vec3(0.5, 0.5, 0));
+    mvp = projection * view * model;
+
+    shader->setMat4("model", model);
+    shader->setMat4("mvp", mvp);
+
+    cube2.draw();
+
     glfwSwapBuffers(window);
 
     glfwPollEvents();
