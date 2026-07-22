@@ -12,10 +12,10 @@ uniform mat4 mvp;
 
 out vec2 texCoord;
 out vec3 normal;
-out fragmentPosition;
+out vec3 fragmentPosition;
 
 void main() {
-  vec4 worldPosition = model * vec4(aPosition. 1.0);
+  vec4 worldPosition = model * vec4(aPosition, 1.0);
 
   gl_Position = mvp * vec4(
     aPosition,

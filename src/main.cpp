@@ -80,11 +80,19 @@ int main() {
   // Initializes Basic Shaders
   Shader *shader;
   try {
-    shader = new Shader("shaders/basic.vert", "shaders/basic.frag");
-  } catch (std::exception e) {
-    cout << "Failed to load basic shaders:\n" << e.what();
+    shader = new Shader(
+        "shaders/basic.vert",
+        "shaders/basic.frag"
+    );
+}
+catch (const std::exception& e) {
+    cout
+        << "Failed to load basic shaders:\n"
+        << e.what()
+        << '\n';
+
     return -1;
-  }
+}
 
   // Initializes camera
   Camera cam(Vec3(0,2,2));
@@ -152,7 +160,7 @@ int main() {
 
     shader->setFloat(
         "shininess",
-        37.0f
+        50.0f
     );
 
     // sends matrices to GPU
