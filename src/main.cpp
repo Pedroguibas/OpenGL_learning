@@ -65,34 +65,51 @@ int main() {
   glEnable(GL_CULL_FACE);
   glCullFace(GL_FRONT);
 
+  // defines ground vertexes 
+  float groundV[] = {
+    -50.0f, 0.0f, -50.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+    50.0f, 0.0f, -50.0f, 10.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+    -50.0f, 0.0f, 50.0f, 0.0f, 10.0f, 0.0f, 1.0f, 0.0f,
+    50.0f, 0.0f, 50.0f, 10.0f, 10.0f, 0.0f, 1.0f, 0.0f
+  };
+
+  GLuint groundI[] = {
+    0, 1, 2,
+    1, 3, 2
+  };
+
+
   Mesh cube1 = Mesh::box(1.0f, 1.0f, 1.0f);
   Mesh cube2 = Mesh::box(1.0f, 1.0f, 1.0f);
+  Mesh ground = Mesh::createLitTextured(groundV, groundI, 6, sizeof(groundV));
 
   // Initializes Texture
-  Texture *tex;
+  Texture *tex, *groundTex;
   try {
     tex = new Texture("textures/stooped.jpg");
-  } catch (std::exception e) {
+    groundTex = new Texture("textures/ground.jpg");
+  } catch (std::exception &e) {
     cout << "Failed to load texture:\n" << e.what();
   }
   tex->bind(0);
+  groundTex->bind(1);
 
   // Initializes Basic Shaders
   Shader *shader;
-  try {
-    shader = new Shader(
-        "shaders/basic.vert",
-        "shaders/basic.frag"
-    );
-}
-catch (const std::exception& e) {
-    cout
-        << "Failed to load basic shaders:\n"
-        << e.what()
-        << '\n';
+    try {
+      shader = new Shader(
+          "shaders/basic.vert",
+          "shaders/basic.frag"
+      );
+  }
+  catch (const std::exception& e) {
+      cout
+          << "Failed to load basic shaders:\n"
+          << e.what()
+          << '\n';
 
-    return -1;
-}
+      return -1;
+  }
 
   // Initializes camera
   Camera cam(Vec3(0,2,2));
@@ -109,71 +126,89 @@ catch (const std::exception& e) {
     // Gets window dimantions and store them in local variables
     glfwGetFramebufferSize(window, &window_w, &window_h);
 
+
     // gets time
     float time = glfwGetTime();
     
     // binds shaders
     shader->use();
+    
+    // sets current texture to be ground.jpg
+    shader->setInt("texture1", 1);
+    
+    // sets up ground MVP matrix
+    Mat4 model;
+    Mat4 view = cam.getViewMatrix();
+    Mat4 projection = cam.getProjectionMatrix(window_w, window_h);
+    Mat4 mvp = projection * view * model;
 
-    // sets current texture on GPU
+    // sends ground mvp
+    shader->setMat4("model", model);
+    shader->setMat4("view", view);
+    shader->setMat4("projection", projection);
+    shader->setMat4("mvp", mvp);
+
+    // sets light properties
+    shader->setVec3(
+      "lightDirection",
+      1.0f,
+      -1.0f,
+      1.0f
+    );
+    shader->setFloat("ambientStrength", 0.25f);
+    shader->setVec3(
+      "lightColor",
+      1.0f,
+      1.0f,
+      1.0f
+    );
+    shader->setVec3(
+      "cameraPosition",
+      cam.position.x,
+      cam.position.y,
+      cam.position.z
+    );
+
+    // sets ground material properties
+    shader->setFloat("specularIntensity", 1.0f);
+    shader->setFloat("shininess", 128.0f);
+
+    ground.draw();
+
+    // sets current texture to be stooped.jpg
     shader->setInt("texture1", 0);
     
     // updates cam positions
     cam.position = Vec3(3*std::cos(time * 1), 3, 3*std::sin(time * 1));
 
     // updates cam orientation
-    cam.lookAt(Vec3(0,0,-0.1));
+    cam.lookAt(Vec3(0,0,0));
 
-    // sets up MVP matrix
-    Mat4 model = translate(Vec3(-0.5, 0.5, 0));
-    Mat4 view = cam.getViewMatrix();
-    Mat4 projection = cam.getProjectionMatrix(window_w, window_h);
-    Mat4 mvp = projection * view * model;
-
-    shader->setVec3(
-        "lightDirection",
-        1.0f,
-        -1.0f,
-        1.0f
-    );
-
-    shader->setFloat("ambientStrength", 0.25f);
-
-    shader->setVec3(
-        "lightColor",
-        1.2f,
-        1.2f,
-        1.2f
-    );
-
-    shader->setVec3(
-        "cameraPosition",
-        cam.position.x,
-        cam.position.y,
-        cam.position.z
-    );
-
+    // sets first cube model and mvp
+    model = translate(Vec3(-0.7, 0.5, 0));
+    mvp = projection * view * model;
+    
+    // sets cube material properties
     shader->setFloat(
         "specularIntensity",
         0.5f
     );
-
     shader->setFloat(
         "shininess",
-        50.0f
+        20.0f
     );
 
-    // sends matrices to GPU
+    // sends first cube mvp
     shader->setMat4("model", model);
-    shader->setMat4("view", view);
-    shader->setMat4("projection", projection);
     shader->setMat4("mvp", mvp);
 
     cube1.draw();
     
-    model = translate(Vec3(0.5, 0.5, 0));
+    // sets second cube material properties
+    model = translate(Vec3(0.7, 0.5, 0));
     mvp = projection * view * model;
 
+    // sends second cube mvp
     shader->setMat4("model", model);
     shader->setMat4("mvp", mvp);
 
