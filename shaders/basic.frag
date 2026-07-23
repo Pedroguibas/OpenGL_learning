@@ -1,5 +1,14 @@
 #version 460 core
 
+struct PointLight {
+  vec3 position;
+  vec3 color;
+
+  float constant;
+  float linear;
+  float quadratic;
+};
+
 in vec2 texCoord;
 in vec3 normal;
 in vec3 fragmentPosition;
@@ -13,6 +22,9 @@ uniform vec3 cameraPosition;
 uniform float ambientStrength;
 uniform float specularIntensity;
 uniform float shininess;
+
+uniform PointLight lights[10];
+uniform int pointLightCount;
 
 out vec4 FragColor;
 
@@ -46,6 +58,41 @@ void main() {
   vec3 specular = specularIntensity * specularStrength * lightColor;
 
   vec3 finalLighting = ambient + diffuse + specular;
+
+  for (int i=0; i<pointLightCount; i++) {
+    vec3 fragmentToLight = lights[i].position - fragmentPosition;
+
+    float distanceToLight = length(fragmentToLight);
+
+    vec3 directionToLight = normalize(fragmentToLight);
+
+    diffuseStrength = max(dot(normalizedNormal, directionToLight), 0.0);
+
+    diffuse = diffuseStrength * lights[i].color;
+
+    reflectedDirection = reflect(
+      -directionToLight,
+      normalizedNormal
+    );
+    
+    specularStrength = pow(
+      max(
+        dot(viewDirection, reflectedDirection),
+        0.0
+      ),
+      shininess
+    );
+
+    specular = specularIntensity * specularStrength * lights[i].color;
+
+    float attenuation = 1.0 / (
+      lights[i].constant +
+      lights[i].linear * distanceToLight +
+      lights[i].quadratic * distanceToLight * distanceToLight
+    );
+
+    finalLighting += (diffuse + specular) * attenuation;
+  }
 
   FragColor = vec4(textureColor.rgb * finalLighting, textureColor.a);
 }

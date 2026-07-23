@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "mat.h"
 #include "Mesh.h"
+#include <PointLight.h>
 #include <Texture.h>
 using std::cout;
 
@@ -116,6 +117,16 @@ int main() {
   
   int window_w;
   int window_h;
+
+  PointLight pl1(Vec3(1.0f, 2.0f, 1.0f), Vec3(0.1f, 0.3f, 1.0f));
+  PointLight pl2(Vec3(-1.0f, 2.0f, 1.0f), Vec3(1.0f, 0.3f, 0.1f));
+
+  shader->use();
+
+  pl1.upload(*shader, 0);
+  pl2.upload(*shader, 1);
+  
+  shader->setInt("pointLightCount", 2);
 
   
   // Window loop

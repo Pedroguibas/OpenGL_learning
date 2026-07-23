@@ -24,6 +24,7 @@ add_executable(OpenGL_learning
 	src/stb_image.cpp
 	src/Texture.cpp
 	src/Mesh.cpp
+	src/PointLight.cpp
 )
 
 target_include_directories(OpenGL_learning PRIVATE

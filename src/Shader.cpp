@@ -172,10 +172,22 @@ void Shader::setVec3(const string &name, const float val1, const float val2, con
   glUniform3f(location, val1, val2, val3);
 }
 
+void Shader::setVec3(const string &name, const Vec3 v) {
+  GLint location = getUniformLocation(name);
+
+  glUniform3f(location, v.x, v.y, v.z);
+}
+
 void Shader::setVec4(const string &name, const float val1, const float val2, const float val3, const float val4) {
   GLint location = getUniformLocation(name);
 
   glUniform4f(location, val1, val2, val3, val4);
+}
+
+void Shader::setVec4(const string &name, const Vec4 v) {
+  GLint location = getUniformLocation(name);
+
+  glUniform4f(location, v.x, v.y, v.z, v.w);
 }
 
 void Shader::setMat4(const string &name, const float *mat) {
