@@ -25,6 +25,7 @@ add_executable(OpenGL_learning
 	src/Texture.cpp
 	src/Mesh.cpp
 	src/PointLight.cpp
+	src/Material.cpp
 )
 
 target_include_directories(OpenGL_learning PRIVATE

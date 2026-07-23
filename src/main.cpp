@@ -9,6 +9,7 @@
 #include "Mesh.h"
 #include <PointLight.h>
 #include <Texture.h>
+#include <Material.h>
 using std::cout;
 
 void framebuffer_size_callback(
@@ -85,15 +86,16 @@ int main() {
   Mesh ground = Mesh::createLitTextured(groundV, groundI, 6, sizeof(groundV));
 
   // Initializes Texture
-  Texture *tex, *groundTex;
+  Texture *tex, *groundTex, *boxDiffuse, *boxSpecular, *defaultSpecular;
   try {
     tex = new Texture("textures/stooped.jpg");
     groundTex = new Texture("textures/ground.jpg");
+    boxDiffuse = new Texture("textures/box_diffuse.png");
+    boxSpecular = new Texture("textures/box_specular.png");
+    defaultSpecular = new Texture("textures/default_specular.png");
   } catch (std::exception &e) {
     cout << "Failed to load texture:\n" << e.what();
   }
-  tex->bind(0);
-  groundTex->bind(1);
 
   // Initializes Basic Shaders
   Shader *shader;
@@ -118,16 +120,18 @@ int main() {
   int window_w;
   int window_h;
 
-  PointLight pl1(Vec3(1.0f, 2.0f, 1.0f), Vec3(0.1f, 0.3f, 1.0f));
-  PointLight pl2(Vec3(-1.0f, 2.0f, 1.0f), Vec3(1.0f, 0.3f, 0.1f));
-
+  PointLight pl1(Vec3(1.0f, 1.0f, 1.0f), Vec3(0.1f, 0.3f, 1.0f));
+  PointLight pl2(Vec3(-1.0f, 1.0f, 1.0f), Vec3(1.0f, 0.3f, 0.1f));
+  
   shader->use();
-
+  
   pl1.upload(*shader, 0);
   pl2.upload(*shader, 1);
   
   shader->setInt("pointLightCount", 2);
 
+  Material metalFloor(*groundTex, *defaultSpecular, Vec3(1.0f, 1.0f, 1.0f), 1.0f, 128.0f);
+  Material boxMaterial(*boxDiffuse, *boxSpecular, Vec3(1.0f, 1.0f, 1.0f), 0.5f, 24.0f);
   
   // Window loop
   while (!glfwWindowShouldClose(window)) {
@@ -137,15 +141,11 @@ int main() {
     // Gets window dimantions and store them in local variables
     glfwGetFramebufferSize(window, &window_w, &window_h);
 
-
     // gets time
     float time = glfwGetTime();
     
     // binds shaders
     shader->use();
-    
-    // sets current texture to be ground.jpg
-    shader->setInt("texture1", 1);
     
     // sets up ground MVP matrix
     Mat4 model;
@@ -180,14 +180,10 @@ int main() {
       cam.position.z
     );
 
-    // sets ground material properties
-    shader->setFloat("specularIntensity", 1.0f);
-    shader->setFloat("shininess", 128.0f);
+    metalFloor.bind(*shader);
 
     ground.draw();
 
-    // sets current texture to be stooped.jpg
-    shader->setInt("texture1", 0);
     
     // updates cam positions
     cam.position = Vec3(3*std::cos(time * 1), 3, 3*std::sin(time * 1));
@@ -199,19 +195,13 @@ int main() {
     model = translate(Vec3(-0.7, 0.5, 0));
     mvp = projection * view * model;
     
-    // sets cube material properties
-    shader->setFloat(
-        "specularIntensity",
-        0.5f
-    );
-    shader->setFloat(
-        "shininess",
-        20.0f
-    );
+    
 
     // sends first cube mvp
     shader->setMat4("model", model);
     shader->setMat4("mvp", mvp);
+
+    boxMaterial.bind(*shader);
 
     cube1.draw();
     

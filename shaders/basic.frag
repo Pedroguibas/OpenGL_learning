@@ -9,27 +9,36 @@ struct PointLight {
   float quadratic;
 };
 
+struct Material {
+  vec3 specularColor;
+  sampler2D diffuse;
+  sampler2D specular;
+
+  float specularIntensity;
+  float shininess;
+};
+
 in vec2 texCoord;
 in vec3 normal;
 in vec3 fragmentPosition;
-
-uniform sampler2D texture1;
 
 uniform vec3 lightDirection;
 uniform vec3 lightColor;
 uniform vec3 cameraPosition;
 
 uniform float ambientStrength;
-uniform float specularIntensity;
-uniform float shininess;
 
 uniform PointLight lights[10];
 uniform int pointLightCount;
 
+uniform Material material;
+
 out vec4 FragColor;
 
 void main() {
-  vec4 textureColor = texture(texture1, texCoord);
+  vec4 textureColor = texture(material.diffuse, texCoord);
+
+  float reflectivity = texture(material.specular, texCoord).r;
 
   vec3 normalizedNormal = normalize(normal);
   vec3 directionToLight = normalize(-lightDirection);
@@ -37,8 +46,6 @@ void main() {
   float diffuseStrength = max(dot(normalizedNormal, directionToLight), 0.0);
 
   vec3 ambient = ambientStrength * lightColor;
-
-  vec3 diffuse = diffuseStrength * lightColor;
   
   vec3 viewDirection = normalize(cameraPosition - fragmentPosition);
 
@@ -52,12 +59,19 @@ void main() {
       dot(viewDirection, reflectedDirection),
       0.0
     ),
-    shininess
+    material.shininess
   );
 
-  vec3 specular = specularIntensity * specularStrength * lightColor;
+  vec3 diffuse = diffuseStrength * lightColor;
 
-  vec3 finalLighting = ambient + diffuse + specular;
+  vec3 specular = 
+    material.specularIntensity *
+    reflectivity *
+    specularStrength *
+    material.specularColor *
+    lightColor;
+
+  vec3 finalColor = textureColor.rgb * (ambient + diffuse) + specular;
 
   for (int i=0; i<pointLightCount; i++) {
     vec3 fragmentToLight = lights[i].position - fragmentPosition;
@@ -68,7 +82,6 @@ void main() {
 
     diffuseStrength = max(dot(normalizedNormal, directionToLight), 0.0);
 
-    diffuse = diffuseStrength * lights[i].color;
 
     reflectedDirection = reflect(
       -directionToLight,
@@ -80,10 +93,17 @@ void main() {
         dot(viewDirection, reflectedDirection),
         0.0
       ),
-      shininess
+      material.shininess
     );
 
-    specular = specularIntensity * specularStrength * lights[i].color;
+    diffuse = diffuseStrength * lights[i].color;
+
+    specular = 
+      material.specularIntensity *
+      reflectivity *
+      specularStrength *
+      material.specularColor *
+      lights[i].color;
 
     float attenuation = 1.0 / (
       lights[i].constant +
@@ -91,8 +111,8 @@ void main() {
       lights[i].quadratic * distanceToLight * distanceToLight
     );
 
-    finalLighting += (diffuse + specular) * attenuation;
+    finalColor += textureColor.rgb * (diffuse + specular) * attenuation;
   }
 
-  FragColor = vec4(textureColor.rgb * finalLighting, textureColor.a);
+  FragColor = vec4(finalColor, textureColor.a);
 }
