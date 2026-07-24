@@ -96,6 +96,11 @@ int main() {
   } catch (std::exception &e) {
     cout << "Failed to load texture:\n" << e.what();
   }
+  tex->bind(0);
+  groundTex->bind(1);
+  boxDiffuse->bind(2);
+  boxSpecular->bind(3);
+  defaultSpecular->bind(4);
 
   // Initializes Basic Shaders
   Shader *shader;
@@ -130,8 +135,8 @@ int main() {
   
   shader->setInt("pointLightCount", 2);
 
-  Material metalFloor(*groundTex, *defaultSpecular, Vec3(1.0f, 1.0f, 1.0f), 1.0f, 128.0f);
-  Material boxMaterial(*boxDiffuse, *boxSpecular, Vec3(1.0f, 1.0f, 1.0f), 0.5f, 24.0f);
+  Material metalFloor(1, 4, Vec3(1.0f, 1.0f, 1.0f), 1.0f, 128.0f);
+  Material boxMaterial(2, 3, Vec3(1.0f, 1.0f, 1.0f), 0.5f, 24.0f);
   
   // Window loop
   while (!glfwWindowShouldClose(window)) {

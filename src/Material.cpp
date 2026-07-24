@@ -1,18 +1,15 @@
 #include <Material.h>
 
-Material::Material(Texture &diffuseTexture, Texture &specularTexture)
-: diffuseTexture(diffuseTexture), specularTexture(specularTexture) {}
+Material::Material(unsigned int diffuseIndex, unsigned int specularIndex)
+: diffuseIndex(diffuseIndex), specularIndex(specularIndex) {}
 
-Material::Material(Texture &diffuseTexture, Texture &specularTexture, Vec3 specularColor, float specularIntensity, float shininess)
-: diffuseTexture(diffuseTexture), specularTexture(specularTexture), specularColor(specularColor),
+Material::Material(unsigned int diffuseIndex, unsigned int specularIndex, Vec3 specularColor, float specularIntensity, float shininess)
+: diffuseIndex(diffuseIndex), specularIndex(specularIndex), specularColor(specularColor),
  specularIntensity(specularIntensity), shininess(shininess) {}
 
 void Material::bind(Shader &s) const {
-  diffuseTexture.bind(0);
-  specularTexture.bind(1);
-
-  s.setInt("material.diffuse", static_cast<int>(0));
-  s.setInt("material.specular", static_cast<int>(1));
+  s.setInt("material.diffuse", static_cast<int>(diffuseIndex));
+  s.setInt("material.specular", static_cast<int>(specularIndex));
 
   s.setVec3("material.specularColor", specularColor);
 
